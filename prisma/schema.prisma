@@ -1,0 +1,52 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  username  String   @unique
+  password  String
+  menus     Menu[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Menu {
+  id          String     @id @default(uuid())
+  name        String
+  description String?
+  location    String?
+  contact     String?
+  sections    Section[]
+  user        User       @relation(fields: [userId], references: [id])
+  userId      String
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+model Section {
+  id        String   @id @default(uuid())
+  name      String
+  items     Item[]
+  menu      Menu     @relation(fields: [menuId], references: [id])
+  menuId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Item {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  ingredients String[]
+  image       String?  // Base64 encoded string
+  section     Section  @relation(fields: [sectionId], references: [id])
+  sectionId   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
